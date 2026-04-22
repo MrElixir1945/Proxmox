@@ -1,41 +1,58 @@
 # Proxmox VE Post-Installation Setup Guide
 
-This documentation provides the essential steps required to configure Proxmox VE immediately after installation. The primary objective is to transition from the default Enterprise repository to the community-supported No-Subscription repository to enable system updates.
+Dokumentasi ini menjelaskan langkah-langkah esensial konfigurasi Proxmox VE setelah instalasi. Tujuan utamanya adalah beralih dari repository Enterprise default ke repository No-Subscription yang didukung komunitas, guna mengaktifkan pembaruan sistem.
 
-## 1. Environment Information
-- **Operating System:** Proxmox VE 9.x
-- **Debian Base:** Trixie (Testing/Unstable)
-- **Target:** Homelab / Development Environment
+---
 
-## 2. Repository Configuration
+## 1. Informasi Lingkungan
 
-By default, Proxmox VE is configured with Enterprise repositories which require a valid subscription. To enable updates without a subscription, the repository sources must be modified.
+| Komponen | Detail |
+|---|---|
+| **Operating System** | Proxmox VE 9.x |
+| **Debian Base** | Trixie (Testing/Unstable) |
+| **Target** | Homelab / Development Environment |
 
-### 2.1. Update Main Sources List
-Edit the file `/etc/apt/sources.list` and ensure it contains the following repositories (ensure no hidden formatting or extra links are present):
+---
 
-```bash
-deb [http://deb.debian.org/debian](http://deb.debian.org/debian) trixie main contrib non-free-firmware
-deb [http://deb.debian.org/debian](http://deb.debian.org/debian) trixie-updates main contrib non-free-firmware
-deb [http://security.debian.org/debian-security](http://security.debian.org/debian-security) trixie-security main contrib non-free-firmware
+## 2. Konfigurasi Repository
+
+Secara default, Proxmox VE dikonfigurasi dengan repository Enterprise yang memerlukan lisensi berbayar. Untuk mengaktifkan pembaruan tanpa berlangganan, sumber repository harus dimodifikasi.
+
+### 2.1. Perbarui Main Sources List
+
+Edit file `/etc/apt/sources.list` dan pastikan isinya adalah sebagai berikut:
+
+```
+deb http://deb.debian.org/debian trixie main contrib non-free-firmware
+deb http://deb.debian.org/debian trixie-updates main contrib non-free-firmware
+deb http://security.debian.org/debian-security trixie-security main contrib non-free-firmware
 
 # Proxmox VE No-Subscription Repository
-deb [http://download.proxmox.com/debian/pve](http://download.proxmox.com/debian/pve) trixie pve-no-subscription
+deb http://download.proxmox.com/debian/pve trixie pve-no-subscription
 
 # Ceph No-Subscription Repository
-deb [http://download.proxmox.com/debian/ceph-squid](http://download.proxmox.com/debian/ceph-squid) trixie no-subscription
-2.2. Remove Misconfigured Enterprise Sources
-To prevent 401 Unauthorized errors during the update process, remove the default enterprise source files that often conflict with the main configuration:
+deb http://download.proxmox.com/debian/ceph-squid trixie no-subscription
+```
 
-Bash
+### 2.2. Hapus Enterprise Sources yang Tidak Diperlukan
+
+Untuk mencegah error `401 Unauthorized` saat proses pembaruan, hapus file sumber enterprise default yang sering menyebabkan konflik:
+
+```bash
 rm /etc/apt/sources.list.d/pve-enterprise.list
 rm /etc/apt/sources.list.d/pve-enterprise.sources
 rm /etc/apt/sources.list.d/ceph.sources
 rm /etc/apt/sources.list.d/debian.sources
-3. System Update and Upgrade
-After configuring the repositories, execute the following commands to refresh the package database and upgrade the system components:
+```
 
-Bash
-apt update
-apt dist-upgrade -y
-Note: dist-upgrade is preferred over upgrade to ensure all dependencies and kernel updates are handled correctly.
+---
+
+## 3. Update dan Upgrade Sistem
+
+Setelah repository dikonfigurasi, jalankan perintah berikut untuk menyegarkan database paket dan memperbarui komponen sistem:
+
+```bash
+apt update && apt dist-upgrade -y
+```
+
+> **Catatan:** `dist-upgrade` lebih disarankan dibanding `upgrade` karena menangani semua dependensi dan pembaruan kernel dengan lebih baik.
