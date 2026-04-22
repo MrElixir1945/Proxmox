@@ -12,7 +12,7 @@ This documentation provides the essential steps required to configure Proxmox VE
 By default, Proxmox VE is configured with Enterprise repositories which require a valid subscription. To enable updates without a subscription, the repository sources must be modified.
 
 ### 2.1. Update Main Sources List
-Edit the file `/etc/apt/sources.list` and ensure it contains the following repositories:
+Edit the file `/etc/apt/sources.list` and ensure it contains the following repositories (ensure no hidden formatting or extra links are present):
 
 ```bash
 deb [http://deb.debian.org/debian](http://deb.debian.org/debian) trixie main contrib non-free-firmware
@@ -25,7 +25,7 @@ deb [http://download.proxmox.com/debian/pve](http://download.proxmox.com/debian/
 # Ceph No-Subscription Repository
 deb [http://download.proxmox.com/debian/ceph-squid](http://download.proxmox.com/debian/ceph-squid) trixie no-subscription
 2.2. Remove Misconfigured Enterprise Sources
-To prevent 401 Unauthorized errors during the update process, remove the default enterprise source files:
+To prevent 401 Unauthorized errors during the update process, remove the default enterprise source files that often conflict with the main configuration:
 
 Bash
 rm /etc/apt/sources.list.d/pve-enterprise.list
