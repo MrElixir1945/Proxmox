@@ -14,14 +14,41 @@ Panduan singkat untuk mempublikasikan web statis dari server lokal ke internet m
 
 ## 1. Jalankan Web Server Lokal
 
-Pastikan file website berada di satu direktori, lalu jalankan server lokal.
+Buat systemd service agar web server otomatis berjalan saat server hidup. Jangan gunakan `nohup` karena tidak persistent setelah reboot.
+
+Buat file service:
 
 ```bash
-cd /var/www/my-project
-nohup python3 -m http.server 8080 > /dev/null 2>&1 &
+nano /etc/systemd/system/web-server.service
 ```
 
-Server berjalan di `localhost:8080`.
+Isi dengan konfigurasi berikut (sesuaikan `WorkingDirectory` dengan path project kamu):
+
+```ini
+[Unit]
+Description=Python Web Server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/www/my-project
+ExecStart=/usr/bin/python3 -m http.server 8080
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Simpan (`Ctrl+O`, `Enter`, `Ctrl+X`), lalu aktifkan:
+
+```bash
+systemctl daemon-reload
+systemctl enable web-server.service
+systemctl start web-server.service
+```
+
+Server berjalan di `localhost:8080` dan akan otomatis start ulang saat reboot.
 
 ---
 
@@ -36,6 +63,13 @@ cloudflared service install <YOUR_TUNNEL_TOKEN>
 ```
 
 4. Pastikan status tunnel menunjukkan **Healthy** di dashboard.
+
+`cloudflared service install` secara otomatis mendaftarkan diri ke systemd. Jika perlu mengaktifkan manual:
+
+```bash
+systemctl enable cloudflared
+systemctl start cloudflared
+```
 
 ---
 
@@ -94,6 +128,19 @@ ipconfig /flushdns
 
 ---
 
+## Auto Start: Proxmox LXC Container
+
+Jika server berjalan di dalam LXC container Proxmox, pastikan container ikut menyala saat Proxmox di-reboot.
+
+1. Buka Proxmox Web UI
+2. Pilih container yang digunakan
+3. Masuk ke **Options**
+4. Klik **Start at boot** > Edit > centang **Yes** > OK
+
+Dengan ini, saat Proxmox hidup, container otomatis start, dan karena web server serta cloudflared sudah terdaftar di systemd, keduanya ikut berjalan otomatis.
+
+---
+
 ## Catatan Penggunaan Pribadi: CasaOS File Browser
 
 Setup ini menggunakan **CasaOS** sebagai file manager untuk mengelola source code frontend langsung dari browser, tanpa perlu SSH setiap kali ingin update file.
@@ -133,11 +180,10 @@ casaos-uninstall
 
 ### Sinkronisasi Direktori
 
-Saat menjalankan web server, arahkan ke direktori yang dapat diakses CasaOS. Secara default CasaOS menyimpan file di `/DATA/`, sesuaikan path-nya:
+Arahkan `WorkingDirectory` di file service systemd ke direktori yang diakses CasaOS. Secara default CasaOS menyimpan file di `/DATA/`:
 
-```bash
-cd /DATA/my-project
-nohup python3 -m http.server 8080 > /dev/null 2>&1 &
+```ini
+WorkingDirectory=/DATA/my-project
 ```
 
 Dengan begitu, setiap perubahan file yang dilakukan lewat CasaOS File Browser langsung tercermin di website tanpa perlu restart server.
