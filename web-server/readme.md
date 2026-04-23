@@ -98,6 +98,34 @@ ipconfig /flushdns
 
 Setup ini menggunakan **CasaOS** sebagai file manager untuk mengelola source code frontend langsung dari browser, tanpa perlu SSH setiap kali ingin update file.
 
+### Install CasaOS
+
+Kompatibel dengan Ubuntu, Debian, Raspberry Pi OS, dan CentOS. Jalankan salah satu perintah berikut:
+
+```bash
+curl -fsSL https://get.casaos.io | sudo bash
+```
+
+atau
+
+```bash
+wget -qO- https://get.casaos.io | sudo bash
+```
+
+Setelah selesai, akses CasaOS di browser via `http://<ip-server>`.
+
+Untuk update:
+
+```bash
+curl -fsSL https://get.casaos.io/update | sudo bash
+```
+
+Untuk uninstall:
+
+```bash
+casaos-uninstall
+```
+
 ### Alur Kerja
 
 1. Upload atau edit file frontend via **CasaOS File Browser**
