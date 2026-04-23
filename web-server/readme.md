@@ -91,3 +91,25 @@ sudo resolvectl flush-caches
 ```bash
 ipconfig /flushdns
 ```
+
+---
+
+## Catatan Penggunaan Pribadi: CasaOS File Browser
+
+Setup ini menggunakan **CasaOS** sebagai file manager untuk mengelola source code frontend langsung dari browser, tanpa perlu SSH setiap kali ingin update file.
+
+### Alur Kerja
+
+1. Upload atau edit file frontend via **CasaOS File Browser**
+2. Pastikan direktori yang digunakan CasaOS sama dengan direktori yang dilayani web server
+
+### Sinkronisasi Direktori
+
+Saat menjalankan web server, arahkan ke direktori yang dapat diakses CasaOS. Secara default CasaOS menyimpan file di `/DATA/`, sesuaikan path-nya:
+
+```bash
+cd /DATA/my-project
+nohup python3 -m http.server 8080 > /dev/null 2>&1 &
+```
+
+Dengan begitu, setiap perubahan file yang dilakukan lewat CasaOS File Browser langsung tercermin di website tanpa perlu restart server.
