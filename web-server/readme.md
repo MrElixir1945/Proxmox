@@ -12,6 +12,48 @@ Panduan singkat untuk mempublikasikan web statis dari server lokal ke internet m
 
 ---
 
+## Spesifikasi Environment (Setup Pribadi)
+
+Setup ini berjalan di atas **Proxmox LXC Container** dengan spesifikasi berikut:
+
+| Komponen       | Spesifikasi              |
+|----------------|--------------------------|
+| CT Template    | Ubuntu 24.04 LTS         |
+| CPU            | 2 Core                   |
+| RAM            | 1 GB                     |
+| Swap           | 0 (disabled)             |
+| Disk           | 20 GB                    |
+| Type           | LXC / CT (Unprivileged)  |
+
+### Catatan Spesifikasi
+
+**RAM 1 GB tanpa swap** — Cukup untuk Python `http.server` + `cloudflared`. Hindari menjalankan proses berat lain secara bersamaan. Pantau penggunaan memori dengan:
+
+```bash
+free -h
+```
+
+Jika ingin menambah sedikit buffer saat memory pressure tinggi, kamu bisa aktifkan swap kecil (opsional):
+
+```bash
+# Buat swap file 512MB (opsional, tidak wajib)
+fallocate -l 512M /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo '/swapfile none swap sw 0 0' >> /etc/fstab
+```
+
+**Disk 20 GB** — Lebih dari cukup untuk web statis. Pantau penggunaan disk dengan:
+
+```bash
+df -h
+```
+
+**CPU 2 Core** — Ideal untuk beban ringan seperti static file serving. `cloudflared` dan Python `http.server` sangat ringan di CPU.
+
+---
+
 ## 1. Jalankan Web Server Lokal
 
 Buat systemd service agar web server otomatis berjalan saat server hidup. Jangan gunakan `nohup` karena tidak persistent setelah reboot.
