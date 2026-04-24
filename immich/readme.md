@@ -21,13 +21,17 @@ Proxmox Host
 
 Buat container baru di Proxmox dengan spesifikasi berikut:
 
-| Komponen         | Keterangan                                      |
-|------------------|-------------------------------------------------|
-| OS Template      | Ubuntu 24.04 LTS                                |
-| Disk OS (rootfs) | Sesuaikan kebutuhan (minimal 10–20 GB)          |
-| Disk Data (mp0)  | Minimal 100 GB, di-mount ke `/mnt/immich-data`  |
-| Network          | IP Statis sesuai segmen jaringan lokal          |
-| Mode Container   | **Unprivileged**                                |
+| Komponen         | Spesifikasi                     | Fungsi                                        |
+|------------------|---------------------------------|-----------------------------------------------|
+| OS               | Ubuntu 24.04 LTS                | Base sistem container                         |
+| CPU              | Sesuaikan kebutuhan             | Menangani proses Immich & Docker              |
+| RAM              | Minimal 4 GB (rekomendasi 6 GB) | Menjalankan server + machine learning         |
+| Disk OS (rootfs) | Minimal 10–20 GB                | Sistem operasi + Docker + config              |
+| Disk Data (mp0)  | Minimal 100 GB                  | Penyimpanan foto & video (`/mnt/immich-data`) |
+| Network          | Static IP                       | Agar IP container tidak berubah saat reboot   |
+| Mode Container   | **Unprivileged**                | Keamanan isolasi container                    |
+
+> **Catatan RAM:** Immich menjalankan fitur machine learning (pengenalan wajah & objek) yang cukup berat. Alokasi RAM di bawah 4 GB berisiko menyebabkan service crash.
 
 ### Cara Tambah Disk Data (mp0) di Proxmox
 
