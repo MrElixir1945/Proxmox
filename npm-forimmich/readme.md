@@ -12,7 +12,7 @@ Internet → Cloudflare Edge → Cloudflare Tunnel (LXC 114) → NPM (LXC 114) �
 
 ---
 
-## Spesifikasi Container (LXC 114)
+## Spesifikasi Container 
 
 | Komponen | Spesifikasi    | Fungsi                              |
 |----------|----------------|-------------------------------------|
